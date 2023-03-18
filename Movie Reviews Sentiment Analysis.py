@@ -15,12 +15,15 @@ with open('MasterDictionary/negative_words.txt', 'r') as file:
 
 for index, row in input_df.iterrows():
     Review_text = row['Reviews']
-
+    
     tokens = nltk.word_tokenize(Review_text)
 
     positive_score = (sum(1 for token in tokens if token in positive_words) / len(tokens)) * 100
 
     negative_score = (sum(1 for token in tokens if token in negative_words) / len(tokens)) * -100
+    print('Starting Sentiment Analysis...')
+    print('Calculating Positive Score')
+    print('Calculating Negative Score')
 
     intensity_score = 0
     for token in tokens:
@@ -30,7 +33,7 @@ for index, row in input_df.iterrows():
             intensity_score += (senti_synset.pos_score() - senti_synset.neg_score())
 
     intensity_score /= (len(tokens) + 0.000001)
-
+    print('Calculating Intensity Score...')
     if intensity_score >= 0.5:
         sentiment_category = 'Very Positive'
     elif intensity_score > 0 and intensity_score < 0.5:
@@ -52,7 +55,7 @@ for index, row in input_df.iterrows():
         emotion = 'sad'
     else:
         emotion = 'anger'
-
+    print('Analyzing Emotions...')
     polarity_score = (positive_score - negative_score) / ((positive_score + negative_score) + 0.000001)
 
     total_words = len(tokens)
@@ -70,4 +73,7 @@ for index, row in input_df.iterrows():
     input_df.at[index, 'SENTIMENT'] = sentiment
     input_df.at[index, 'SENTIMENT CATEGORY'] = sentiment_category
     input_df.at[index, 'EMOTION'] = emotion
+
+print('Reviw Sentiment Analysis Completed!')
 input_df.to_excel('Output/Movie_Review_Sentimental_Analysis_Report.xlsx', index=False)
+print('Saved as Output/Movie_Review_Sentimental_Analysis_Report.xlsx')
